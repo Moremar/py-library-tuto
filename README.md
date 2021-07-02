@@ -6,3 +6,4 @@ Tutorials and examples of useful python libraries :
 - **matplotlib** to define and display graphs
 - **seaborn** to improve the design and enrich the types of graphs from Matplotlib
 - **numpy** for operations on math objects (matrices, arrays...)
+- **pandas** to manipulate large data sets
