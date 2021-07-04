@@ -8,3 +8,4 @@ Tutorials and examples of useful python libraries :
 - **numpy** for operations on math objects (matrices, arrays...)
 - **pandas** to manipulate large data sets
 - **pendulum** to manipulate datetime objects
+- **boto3** to interact with AWS cloud services
