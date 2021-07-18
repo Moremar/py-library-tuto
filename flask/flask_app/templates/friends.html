@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Friends
+{% endblock %}
+
+{% block body %}
+<h2>Friends list :</h2>
+<ul>
+{% for friend in friends %}
+    <li> {{ friend.name }} 
+        {% if friend.age %}({{friend.age}} years old) {% endif %}
+        who likes {{ friend.hobby }} </li>
+{% endfor %}
+</ul>
+{% endblock %}
