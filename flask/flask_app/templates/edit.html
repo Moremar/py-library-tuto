@@ -1,20 +1,21 @@
 {% extends 'base.html' %}
 
-{% block title %}
-Edit Post
-{% endblock %}
-
-{% block body %}
+{% block content %}
 <h2>Edit post {{post.id}} </h2>
 
 <form action="/posts/edit/{{post.id}}" method="POST">
-    Title : <input type="text" name="title" id="title" value="{{post.title}}" />
+    <label for="title">Title</label>
+    <input class="form-control" type="text" value="{{post.title}}" aria-label="Enter title" name="title" id="title">
     <br />
-    Author : <input type="text" name="author" id="author" value="{{post.author}}" />
+    <label for="author">Author</label>
+    <input class="form-control" type="text" value="{{post.author}}" aria-label="Enter author" name="author" id="author">
     <br />
-    Content : <input type="text" name="content" id="content" value="{{post.content}}" />
+    <label for="content">Content</label>
+    <textarea class="form-control" placeholder="Enter your post content" name="content" id="content">
+        {{post.content}}
+    </textarea>
     <br />
-    <input type="submit" value="Update" />
+    <input class="btn btn-primary" type="submit" value="Update" />
 </form>
 
 {% endblock %}
