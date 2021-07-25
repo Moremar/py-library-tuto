@@ -1,5 +1,5 @@
-from app import db
-from app import BlogPost, User
+from myblog import db
+from myblog.models import BlogPost, User
 
 # This code can be ran to create the DB (this should be done once, and not via the website)
 # It also shows several commands to interact with objects in the DB, for example the CRUD

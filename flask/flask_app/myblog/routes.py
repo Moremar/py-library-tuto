@@ -1,20 +1,13 @@
-from flask import Flask, request, render_template, redirect, flash, url_for
-from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from flask import request, render_template, redirect, flash, url_for
 
-from forms import SignupForm, LoginForm
-
-
-# Create a Flask object representing our webapp
-app = Flask(__name__)
-
-# A secret is required to access data from the session
-# The session allows the backend to store encrypted data.
-# This data can be seen but not modified by the client without the secret key
-app.config['SECRET_KEY'] = '5jer0p5n1abl94g8hbh'
+# import "db" and "app" defined in the __init__.py, and other modules from the package
+# Note : for some reason the import of myblog package is flagged as an error in Pycharm
+from myblog import app, db
+from myblog.models import BlogPost, User
+from myblog.forms import SignupForm, LoginForm
 
 
-# Handler for one or multiple route(s) returning a hardcoded string
+# Handler for a GET request on url /hello returning a hardcoded string
 @app.route('/hello')
 def hello_handler():
     return 'Hello world'
@@ -48,45 +41,6 @@ def friends_handler():
         {'name': 'Damian', 'hobby': 'kung-fu', 'age': 15},
     ]
     return render_template('friends.html', title="Friends", friends=all_friends)
-
-
-# Setup the DB path
-# SQL-Alchemy can handle different database engines (MySQL, PostgreSQL, SQLite...)
-# Here we use SQLite that creates the DB in a local file in the current directory
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'  # 3 slashes is for relative path
-db = SQLAlchemy(app)
-
-
-# Create the model for the blog posts table in the DB
-# The types are dynamically attached to the SQLAlchemy object so python does not detect them
-class BlogPost(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    created_on = db.Column(db.DateTime, nullable=False, default=datetime.now)
-
-    # Field defined as foreign key
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    def __repr__(self):
-        return f'BlogPost({self.id}, {self.title}, {self.content}, {self.user_id}, {self.created_on})'
-
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(20), unique=True, nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default='default.jpg')
-    password_hash = db.Column(db.String(60), nullable=False)
-
-    # 1-to-many relationship : define a relationship in the parent and a foreign key in the child
-    # calling user.posts will actually run a query to fetch the posts
-    # calling post.author will get the User object associated to the foreign key
-    # the 'lazy' will load the posts for a user only when requested
-    posts = db.relationship('BlogPost', backref='author', lazy=True)
-
-    def __repr__(self):
-        return f'User({self.id}, {self.username}, {self.email}, {self.image_file})'
 
 
 # Handler getting all posts in the database when called with GET
@@ -172,7 +126,3 @@ def login_handler():
 @app.route('/reset_password')
 def reset_password_handler():
     return 'TODO'
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
