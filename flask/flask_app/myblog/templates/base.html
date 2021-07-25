@@ -32,8 +32,13 @@
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <a class="nav-item nav-link" href="{{url_for('login_handler')}}">Log in</a>
-              <a class="nav-item nav-link" href="{{url_for('signup_handler')}}">Sign up</a>
+              {% if current_user.is_authenticated %}
+              <a class="nav-item nav-link" href="{{url_for('account_handler')}}">Account</a>
+              <a class="nav-item nav-link" href="{{url_for('logout_handler')}}">Logout</a>
+              {% else %}
+              <a class="nav-item nav-link" href="{{url_for('login_handler')}}">Login</a>
+              <a class="nav-item nav-link" href="{{url_for('signup_handler')}}">Signup</a>
+              {% endif %}
             </div>
           </div>
         </div>

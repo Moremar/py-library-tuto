@@ -1,9 +1,12 @@
 from myblog import db
 from myblog.models import BlogPost, User
 
-# This code can be ran to create the DB (this should be done once, and not via the website)
-# It also shows several commands to interact with objects in the DB, for example the CRUD
-# commands used by URL handlers of the Flask website to create/read/update/delete blog posts.
+# This script shows the commands to interact with the database using the SQLAlchemy model classes.
+# - DB deletion
+# - DB creation
+# - CRUD operations
+# It is not part of the webapp, but similar commands are used in the webapp routes to create/update/delete resources.
+
 
 # drop existing DB
 db.drop_all()

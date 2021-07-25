@@ -1,5 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
+
 
 # Create a Flask object representing our webapp
 app = Flask(__name__)
@@ -16,6 +19,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'  # 3 slashes is for
 
 # Create the DB hadnler required to define the DB model and interact with the DB
 db = SQLAlchemy(app)
+
+# Bcrypt object to hash passwords and check a stored hash against a potential password from the user
+bcrypt = Bcrypt(app)
+
+# Login manager to handle user sessions
+login_manager = LoginManager(app)
+login_manager.login_view = 'login_handler'     # handler to redirect to for endpoints with login required
+login_manager.login_message_category = 'info'  # set alert-info class to the message div when redirecting to login page 
 
 # import the routes so Flask knows about them when running the blog webapp with app.run()
 from myblog import routes

@@ -1,6 +1,16 @@
+from flask_login import UserMixin
 from datetime import datetime
 
-from myblog import db
+from myblog import db, login_manager
+
+
+# For the login manager to be able to manage the session, it needs :
+#  - the below function with decorator to know how to get a user in DB
+#  - the DB user model to have some specific fields (is_active, is_authenticated...)
+#    these can be done by extending the UserMixin class
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 
 # Create the model for the blog posts table in the DB
@@ -18,7 +28,7 @@ class BlogPost(db.Model):
         return f'BlogPost({self.id}, {self.title}, {self.content}, {self.user_id}, {self.created_on})'
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)

@@ -1,8 +1,9 @@
 from flask import request, render_template, redirect, flash, url_for
+from flask_login import login_user, logout_user, current_user, login_required
 
 # import "db" and "app" defined in the __init__.py, and other modules from the package
 # Note : for some reason the import of myblog package is flagged as an error in Pycharm
-from myblog import app, db
+from myblog import app, db, bcrypt
 from myblog.models import BlogPost, User
 from myblog.forms import SignupForm, LoginForm
 
@@ -96,31 +97,63 @@ def edit_post_handler(post_id):
 # Handler to register a new user
 @app.route('/signup', methods=['GET', 'POST'])
 def signup_handler():
+    # redirect to home if the user is already authenticated
+    if current_user.is_authenticated:
+        return redirect(url_for('home_handler'))
+
     # build the form from the request
     form = SignupForm()
     # check if the method is POST and the provided data are valid
     if form.validate_on_submit():
+        # create the user in DB with its password hash
+        hash = bcrypt.generate_password_hash(form.password.data).decode('utf-8')
+        user = User(username=form.username.data, email=form.email.data, password_hash=hash)
+        db.session.add(user)
+        db.session.commit()
         # send a temporary success alert to the frontend
-        flash(f'Account created for {form.username.data}!', 'success')
-        return redirect(url_for('home_handler'))
+        flash(f'Account created for {form.username.data}, please login.', 'success')
+        return redirect(url_for('login_handler'))
+ 
     return render_template('signup.html', title="Signup", form=form)
 
 
 # Handler to login with an existing user
 @app.route('/login', methods=['GET', 'POST'])
 def login_handler():
+    # redirect to home if the user is already authenticated
+    if current_user.is_authenticated:
+        return redirect(url_for('home_handler'))
+
     # build the form from the request
     form = LoginForm()
     # check if the method is POST and the provided data are valid
     if form.validate_on_submit():
-        # TODO proper validation against backend
-        if form.email.data == 'admin@blog.com' and form.password.data == 'password':
-            # send a temporary success alert to the frontend
+        user = User.query.filter_by(email=form.email.data).first()
+        if user and bcrypt.check_password_hash(user.password_hash, form.password.data):
+            # login the user using Flask-Login extension
+            login_user(user, remember=form.remember_me.data)
             flash(f'Logged as {form.email.data}!', 'success')
-            return redirect(url_for('home_handler'))
+            # if there is a next page in the query, redirect to it (in case of login required redirect)
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('home_handler'))
         else:
             flash(f'Login failed : invalid credentials.', 'danger')
+
     return render_template('login.html', title="Login", form=form)
+
+
+# Handler to logout with an existing user
+@app.route('/logout')
+def logout_handler():
+    logout_user()
+    return redirect(url_for('home_handler'))
+
+
+# Handler to access the user account info (only available when logged in)
+@app.route('/account')
+@login_required
+def account_handler():
+    return render_template('account.html', title='Account')
 
 
 @app.route('/reset_password')
