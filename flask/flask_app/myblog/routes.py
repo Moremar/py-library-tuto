@@ -1,11 +1,15 @@
+import secrets  # only used for a random hex
+import os
+
 from flask import request, render_template, redirect, flash, url_for
 from flask_login import login_user, logout_user, current_user, login_required
+from PIL import Image  # part of Pillow (Python Imaging Library)
 
 # import "db" and "app" defined in the __init__.py, and other modules from the package
 # Note : for some reason the import of myblog package is flagged as an error in Pycharm
 from myblog import app, db, bcrypt
 from myblog.models import BlogPost, User
-from myblog.forms import SignupForm, LoginForm
+from myblog.forms import SignupForm, LoginForm, UpdateAccountForm
 
 
 # Handler for a GET request on url /hello returning a hardcoded string
@@ -149,11 +153,45 @@ def logout_handler():
     return redirect(url_for('home_handler'))
 
 
+def save_picture(picture):
+    # create a name for the picture file
+    hex = secrets.token_hex(8)
+    _, file_ext = os.path.splitext(picture.filename)
+    file_name = current_user.username + '_' + hex + file_ext
+    picture_path = os.path.join(app.root_path, 'static/images', file_name)
+    # Resize the image with Pillow
+    output_size = (125, 125)
+    i = Image.open(picture)
+    i.thumbnail(output_size)
+    # Save the file in the images folder
+    i.save(picture_path)
+    return file_name
+
 # Handler to access the user account info (only available when logged in)
-@app.route('/account')
+# The login_required decorator checks if the user is logged and if he is not he is redirected
+# to the login page (specified in the login manager in __init__.py)
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account_handler():
-    return render_template('account.html', title='Account')
+    form = UpdateAccountForm()
+    if form.validate_on_submit():
+        if form.picture.data:
+            # save the file in the images folder
+            file_name = save_picture(form.picture.data)
+            # Update the DB with this file
+            current_user.image_file = file_name
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Your account has been updated', 'success')
+        return redirect(url_for('account_handler'))
+    elif request.method == 'GET':
+        # pre-populate the username and email
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
+    image_path = url_for('static', filename='images/' + current_user.image_file)
+    return render_template('account.html', title='Account', image_path = image_path, form=form)
 
 
 @app.route('/reset_password')

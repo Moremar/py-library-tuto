@@ -1,6 +1,6 @@
 from myblog import app
 
-# For a better split of the code, we only have this run.py script run the webapp.
+# For a better split of the code, we run the webapp from this run.py script.
 # The actual webapp code is in its own package.
 # The "db" and "app" variable are defined in the __init__.py of the package so they are accessible to
 # the outside (like this script) and to all modules inside the package.
