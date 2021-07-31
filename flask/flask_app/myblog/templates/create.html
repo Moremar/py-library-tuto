@@ -1,8 +1,52 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Create a new post </h2>
+ <div class="content-section">
+        <!-- empty action will post to the same route -->
+        <form method="POST" action="">
+            <!-- required for security -->
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">New post</legend>
+                
+                <!-- Title field -->
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
 
+                <!-- Content field -->
+                <div class="form-group">
+                    {{ form.content.label(class="form-control-label") }}
+                    {% if form.content.errors %}
+                        {{ form.content(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.content(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group mt-3">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
+
+<!-- New Post form without WTForm -->
+<!--
 <form action="/posts/create" method="POST">
     <label for="title">Title</label>
     <input class="form-control" type="text" placeholder="Enter title" aria-label="Enter title" name="title" id="title">
@@ -15,5 +59,5 @@
     <br />
     <input class="btn btn-primary" type="submit" value="Post" />
 </form>
-
+-->
 {% endblock %}

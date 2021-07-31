@@ -1,7 +1,7 @@
 import secrets  # only used for a random hex
 import os
 
-from flask import request, render_template, redirect, flash, url_for
+from flask import request, render_template, redirect, flash, url_for, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from PIL import Image  # part of Pillow (Python Imaging Library)
 
@@ -9,7 +9,7 @@ from PIL import Image  # part of Pillow (Python Imaging Library)
 # Note : for some reason the import of myblog package is flagged as an error in Pycharm
 from myblog import app, db, bcrypt
 from myblog.models import BlogPost, User
-from myblog.forms import SignupForm, LoginForm, UpdateAccountForm
+from myblog.forms import SignupForm, LoginForm, UpdateAccountForm, PostForm
 
 
 # Handler for a GET request on url /hello returning a hardcoded string
@@ -57,45 +57,56 @@ def get_posts_handler():
 
 
 # Handler to delete a blog post
-@app.route('/posts/delete/<int:post_id>')
+@app.route('/posts/delete/<int:post_id>', methods=['POST'])
+@login_required
 def delete_post_handler(post_id):
     post = BlogPost.query.get_or_404(post_id)
+    if post.author != current_user:   # we can also use: post.user_id != current_user.id
+        abort(403)
     db.session.delete(post)
     db.session.commit()
-    return redirect('/posts')
+    flash('Your post has been deleted.', 'success')
+    return redirect(url_for('get_posts_handler'))
 
 
 # Handler to create a post
 # GET will access the creation page, and POST will create the post in the database
 @app.route('/posts/create', methods=['GET', 'POST'])
+@login_required
 def create_post_handler():
-    if request.method == 'POST':
+    form = PostForm()
+    if form.validate_on_submit():
         # Add a post in the DB on POST (from the form submit button click)
-        post_title = request.form['title']
-        post_content = request.form['content']
-        post_author = request.form['author']
-        # Create DB object
-        new_post = BlogPost(title=post_title, content=post_content, author=post_author)
+        new_post = BlogPost(title=form.title.data, content=form.content.data, user_id=current_user.id)
         db.session.add(new_post)
         db.session.commit()
+        flash('Your post was successfully created.', 'success')
         return redirect('/posts')
-    elif request.method == 'GET':
-        return render_template('create.html', title="New")
+
+    return render_template('create.html', title="New", form=form)
 
 
 # Handler to edit a blog post
 # GET will access the edition page, and POST will update the database
 @app.route('/posts/edit/<int:post_id>', methods=['GET', 'POST'])
+@login_required
 def edit_post_handler(post_id):
     post = BlogPost.query.get_or_404(post_id)
-    if request.method == 'POST':
-        post.title = request.form['title']
-        post.content = request.form['content']
-        post.author = request.form['author']
+    if current_user.id != post.user_id:
+        # Not allowed to edit another user's post
+        abort(403)
+    form = PostForm()
+    if form.validate_on_submit():
+        post.title = form.title.data
+        post.content = form.content.data
         db.session.commit()
+        flash('Your post has been updated!', 'success')
         return redirect('/posts')
-    elif request.method == 'GET':
-        return render_template('edit.html', title="Edit", post=post)
+    if request.method == 'GET':
+        # pre-populate the title and content
+        form.title.data = post.title
+        form.content.data = post.content
+    return render_template('edit.html', title="Edit", post=post, form=form)
 
 
 # Handler to register a new user

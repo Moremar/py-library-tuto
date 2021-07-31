@@ -1,21 +1,47 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Edit post {{post.id}} </h2>
+ <div class="content-section">
+        <!-- empty action will post to the same route -->
+        <form method="POST" action="">
+            <!-- required for security -->
+            {{ form.hidden_tag() }}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Update post</legend>
+                
+                <!-- Title field -->
+                <div class="form-group">
+                    {{ form.title.label(class="form-control-label") }}
+                    {% if form.title.errors %}
+                        {{ form.title(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.title.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.title(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
 
-<form action="/posts/edit/{{post.id}}" method="POST">
-    <label for="title">Title</label>
-    <input class="form-control" type="text" value="{{post.title}}" aria-label="Enter title" name="title" id="title">
-    <br />
-    <label for="author">Author</label>
-    <input class="form-control" type="text" value="{{post.author}}" aria-label="Enter author" name="author" id="author">
-    <br />
-    <label for="content">Content</label>
-    <textarea class="form-control" placeholder="Enter your post content" name="content" id="content">
-        {{post.content}}
-    </textarea>
-    <br />
-    <input class="btn btn-primary" type="submit" value="Update" />
-</form>
-
+                <!-- Content field -->
+                <div class="form-group">
+                    {{ form.content.label(class="form-control-label") }}
+                    {% if form.content.errors %}
+                        {{ form.content(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.content.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.content(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+            </fieldset>
+            <div class="form-group mt-3">
+                {{ form.submit(class="btn btn-outline-info") }}
+            </div>
+        </form>
+    </div>
 {% endblock %}

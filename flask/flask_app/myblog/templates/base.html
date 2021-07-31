@@ -27,12 +27,12 @@
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav me-auto">
               <a class="nav-item nav-link" href="{{url_for('home_handler')}}">Home</a>
-              <a class="nav-item nav-link" href="{{url_for('friends_handler')}}">Friends</a>
               <a class="nav-item nav-link" href="{{url_for('get_posts_handler')}}">Posts</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
+              <a class="nav-item nav-link" href="{{url_for('create_post_handler')}}">New Post</a>
               <a class="nav-item nav-link" href="{{url_for('account_handler')}}">Account</a>
               <a class="nav-item nav-link" href="{{url_for('logout_handler')}}">Logout</a>
               {% else %}
