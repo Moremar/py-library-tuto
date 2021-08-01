@@ -51,9 +51,23 @@ def friends_handler():
 # Handler getting all posts in the database when called with GET
 @app.route('/posts', methods=['GET'])
 def get_posts_handler():
-    # return all the posts from the DB
-    all_posts = BlogPost.query.order_by(BlogPost.created_on).all()
-    return render_template('posts.html', title="Posts", posts=all_posts)
+    # optional parameters
+    user_id = request.args.get('user', -1, type=int)
+    page = request.args.get('page', 1, type=int)
+    if user_id != -1:
+        # return all posts from the specified user paginated by pages of 3 posts
+        user  = User.query.get_or_404(user_id) 
+        posts = BlogPost.query\
+                        .filter_by(user_id=user_id)\
+                        .order_by(BlogPost.created_on.desc())\
+                        .paginate(per_page=3, page=page)
+    else:
+        # return all the posts from the DB paginated by pages of 3 posts
+        user = None
+        posts = BlogPost.query\
+                        .order_by(BlogPost.created_on.desc())\
+                        .paginate(per_page=3, page=page)
+    return render_template('posts.html', title="Posts", posts=posts, user=user)
 
 
 # Handler to delete a blog post

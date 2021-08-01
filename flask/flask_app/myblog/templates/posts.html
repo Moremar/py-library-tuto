@@ -2,18 +2,22 @@
 
 {% block content %}
 <div>
-    <h2 style="display:inline">All posts</h2>
+    {% if user %}
+        <h2 style="display:inline">All posts by {{ user.username }} ({{ posts.total }})</h2>
+    {% else %}
+        <h2 style="display:inline">All posts ({{ posts.total }})</h2>
+    {% endif %}
     <a class="btn btn-primary float-right" style="display:inline;float:right" href="/posts/create">New Post</a>
 </div>
 <br />
 
-{% for post in posts %}
+{% for post in posts.items %}
     <article class="d-flex content-section">
       <img class="rounded-circle article-img" src="{{url_for('static', filename='images/' + post.author.image_file)}}" />
       <div class="media-body" style="flex-grow:1">
         <div class="article-metadata d-flex" style="justify-content: space-between">
           <div class="mt-1">
-          <b>{{ post.author.username }}</b>
+          <a href="{{url_for('get_posts_handler', user=post.user_id)}}">{{ post.author.username }}</a>
           <small class="text-muted">{{post.created_on.strftime("%m/%d/%Y")}}</small>
           </div>
           <div>
@@ -49,6 +53,18 @@
         </div>
       </div>
     </div>
-
 {% endfor %}
+
+{% for page_num in posts.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+    {% if page_num %}
+        {% if page_num == posts.page %}
+            <a class="btn btn-info mb-4 mr-1 disabled" href="#">{{ page_num }}</a>
+        {% else %}
+            <a class="btn btn-outline-info  mb-4 mr-1" href="{{ url_for('get_posts_handler', page=page_num, user=user.id if user else -1) }}">{{ page_num }}</a>
+        {% endif %}
+    {% else %}
+        ... 
+    {% endif %}
+{% endfor %}
+
 {% endblock %}
