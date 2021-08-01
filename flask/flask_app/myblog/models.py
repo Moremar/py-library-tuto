@@ -1,7 +1,8 @@
-from flask_login import UserMixin
 from datetime import datetime
+from flask_login import UserMixin
+from itsdangerous.url_safe import URLSafeTimedSerializer
 
-from myblog import db, login_manager
+from myblog import app, db, login_manager
 
 
 # For the login manager to be able to manage the session, it needs :
@@ -43,3 +44,18 @@ class User(db.Model, UserMixin):
 
     def __repr__(self):
         return f'User({self.id}, {self.username}, {self.email}, {self.image_file})'
+
+    def generate_reset_token(self):
+        secret_key = app.config['SECRET_KEY']
+        serializer = URLSafeTimedSerializer(secret_key, salt='RESET')
+        return serializer.dumps({ 'user_id': self.id })
+
+    @staticmethod
+    def verify_reset_token(token):
+        secret_key = app.config['SECRET_KEY']
+        serializer = URLSafeTimedSerializer(secret_key, salt='RESET')
+        try:
+            user_id = serializer.loads(token, max_age=600)['user_id']  # expire after 10min
+        except Exception as e:
+            return None
+        return User.query.get(user_id)
