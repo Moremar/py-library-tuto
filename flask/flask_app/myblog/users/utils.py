@@ -1,14 +1,14 @@
 import secrets  # only used for a random hex
 import os
 
-from flask import url_for
+from flask import current_app, url_for
 from flask_login import current_user
 from flask_mail import Message
 from PIL import Image  # part of Pillow (Python Imaging Library)
 
 # import "db" and "app" defined in the __init__.py, and other modules from the package
 # Note : for some reason the import of myblog package is flagged as an error in Pycharm
-from myblog import app, mail
+from myblog import mail
 
 
 def save_picture(picture):
@@ -16,7 +16,7 @@ def save_picture(picture):
     hex = secrets.token_hex(8)
     _, file_ext = os.path.splitext(picture.filename)
     file_name = current_user.username + '_' + hex + file_ext
-    picture_path = os.path.join(app.root_path, 'static/images', file_name)
+    picture_path = os.path.join(current_app.root_path, 'static/images', file_name)
     # Resize the image with Pillow
     output_size = (125, 125)
     i = Image.open(picture)

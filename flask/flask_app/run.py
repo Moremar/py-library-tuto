@@ -1,4 +1,4 @@
-from myblog import app
+from myblog import create_app
 
 # For a better split of the code, we run the webapp from this run.py script.
 # The actual webapp code is in its own package.
@@ -9,6 +9,7 @@ from myblog import app
 #  - the forms used in the web pages
 #  - the model of the DB
 
+app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)

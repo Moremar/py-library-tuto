@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, current_user, login_required
 
 # import "db" and "app" defined in the __init__.py, and other modules from the package
 # Note : for some reason the import of myblog package is flagged as an error in Pycharm
-from myblog import app, db, bcrypt, mail
+from myblog import db, bcrypt, mail
 from myblog.models import User
 from myblog.users.forms import SignupForm, LoginForm, UpdateAccountForm, RequestResetForm, ResetPasswordForm
 from myblog.users.utils import save_picture, send_reset_email
