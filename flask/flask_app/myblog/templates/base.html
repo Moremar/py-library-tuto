@@ -26,18 +26,18 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav me-auto">
-              <a class="nav-item nav-link" href="{{url_for('home_handler')}}">Home</a>
-              <a class="nav-item nav-link" href="{{url_for('get_posts_handler')}}">Posts</a>
+              <a class="nav-item nav-link" href="{{url_for('common.home_handler')}}">Home</a>
+              <a class="nav-item nav-link" href="{{url_for('posts.get_posts_handler')}}">Posts</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
-              <a class="nav-item nav-link" href="{{url_for('create_post_handler')}}">New Post</a>
-              <a class="nav-item nav-link" href="{{url_for('account_handler')}}">Account</a>
-              <a class="nav-item nav-link" href="{{url_for('logout_handler')}}">Logout</a>
+              <a class="nav-item nav-link" href="{{url_for('posts.create_post_handler')}}">New Post</a>
+              <a class="nav-item nav-link" href="{{url_for('users.account_handler')}}">Account</a>
+              <a class="nav-item nav-link" href="{{url_for('users.logout_handler')}}">Logout</a>
               {% else %}
-              <a class="nav-item nav-link" href="{{url_for('login_handler')}}">Login</a>
-              <a class="nav-item nav-link" href="{{url_for('signup_handler')}}">Signup</a>
+              <a class="nav-item nav-link" href="{{url_for('users.login_handler')}}">Login</a>
+              <a class="nav-item nav-link" href="{{url_for('users.signup_handler')}}">Signup</a>
               {% endif %}
             </div>
           </div>

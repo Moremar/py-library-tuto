@@ -17,7 +17,7 @@
       <div class="media-body" style="flex-grow:1">
         <div class="article-metadata d-flex" style="justify-content: space-between">
           <div class="mt-1">
-          <a href="{{url_for('get_posts_handler', user=post.user_id)}}">{{ post.author.username }}</a>
+          <a href="{{url_for('posts.get_posts_handler', user=post.user_id)}}">{{ post.author.username }}</a>
           <small class="text-muted">{{post.created_on.strftime("%m/%d/%Y")}}</small>
           </div>
           <div>
@@ -46,7 +46,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <form method="POST" action="{{ url_for('delete_post_handler', post_id=post.id) }}">
+            <form method="POST" action="{{ url_for('posts.delete_post_handler', post_id=post.id) }}">
                 <input type="submit" class="btn btn-danger" value="Delete">
             </form>
           </div>
@@ -60,7 +60,7 @@
         {% if page_num == posts.page %}
             <a class="btn btn-info mb-4 mr-1 disabled" href="#">{{ page_num }}</a>
         {% else %}
-            <a class="btn btn-outline-info  mb-4 mr-1" href="{{ url_for('get_posts_handler', page=page_num, user=user.id if user else -1) }}">{{ page_num }}</a>
+            <a class="btn btn-outline-info  mb-4 mr-1" href="{{ url_for('posts.get_posts_handler', page=page_num, user=user.id if user else -1) }}">{{ page_num }}</a>
         {% endif %}
     {% else %}
         ... 

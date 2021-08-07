@@ -29,7 +29,7 @@ bcrypt = Bcrypt(app)
 
 # Login manager to handle user sessions
 login_manager = LoginManager(app)
-login_manager.login_view = 'login_handler'     # handler to redirect to for endpoints with login required
+login_manager.login_view = 'users.login_handler'     # handler to redirect to for endpoints with login required
 login_manager.login_message_category = 'info'  # set alert-info class to the message div when redirecting to login page 
 
 # required setup for sending emails
@@ -43,4 +43,10 @@ if not app.config['MAIL_USERNAME'] or not app.config['MAIL_PASSWORD']:
 mail = Mail(app)
 
 # import the routes so Flask knows about them when running the blog webapp with app.run()
-from myblog import routes
+from myblog.users.routes import users_blueprint
+from myblog.posts.routes import posts_blueprint
+from myblog.common.routes import common_blueprint
+
+app.register_blueprint(users_blueprint)
+app.register_blueprint(posts_blueprint)
+app.register_blueprint(common_blueprint)
