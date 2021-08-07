@@ -25,6 +25,7 @@ mail = Mail()
 from myblog.users.routes import users_blueprint
 from myblog.posts.routes import posts_blueprint
 from myblog.common.routes import common_blueprint
+from myblog.errors.handlers import errors_blueprint
 
 
 def create_app(config_class=Config):
@@ -48,5 +49,6 @@ def create_app(config_class=Config):
     app.register_blueprint(users_blueprint)
     app.register_blueprint(posts_blueprint)
     app.register_blueprint(common_blueprint)
+    app.register_blueprint(errors_blueprint)
 
     return app
