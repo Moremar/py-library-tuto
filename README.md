@@ -13,3 +13,5 @@ Tutorials and examples of useful python libraries :
 - **pendulum** to manipulate datetime objects
 - **re** to search/match text with regular expressions
 - **seaborn** to improve the design and enrich the types of graphs from Matplotlib
+- **unittest** to define and run unit tests for our Python code
+
