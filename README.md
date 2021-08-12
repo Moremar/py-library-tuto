@@ -15,3 +15,4 @@ Tutorials and examples of useful python libraries :
 - **seaborn** to improve the design and enrich the types of graphs from Matplotlib
 - **unittest** to define and run unit tests for our Python code
 
+There is also an **python_tips** section with useful tips to write Python code !
